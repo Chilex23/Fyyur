@@ -452,21 +452,19 @@ def show_artist(artist_id):
 def edit_artist(artist_id):
   form = ArtistForm()
   artist = Artist.query.get(artist_id)
-  body={
-    "id": artist.id,
-    "name": artist.name,
-    "genres": format_string(artist.genres).split(','),
-    "city": artist.city,
-    "state": artist.state,
-    "phone": artist.phone,
-    "website": artist.website_link,
-    "facebook_link": artist.facebook_link,
-    "seeking_venue": artist.seeking_venue,
-    "seeking_description": artist.seeking_desc,
-    "image_link": artist.image_link
-  }
+  form.name.default = artist.name
+  form.city.default = artist.city
+  form.state.default = artist.state
+  form.phone.default = artist.phone
+  form.genres.default = artist.genres
+  form.image_link.default = artist.image_link
+  form.website_link.default = artist.website_link
+  form.facebook_link.default = artist.facebook_link
+  form.seeking_venue.default = artist.seeking_venue
+  form.seeking_description.default = artist.seeking_desc
+  form.process()
   # TODO: populate form with fields from artist with ID <artist_id>
-  return render_template('forms/edit_artist.html', form=form, artist=body)
+  return render_template('forms/edit_artist.html', form=form, artist=artist)
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
@@ -491,22 +489,20 @@ def edit_artist_submission(artist_id):
 def edit_venue(venue_id):
   form = VenueForm()
   venue = Venue.query.get(venue_id)
-  body={
-    "id": venue.id,
-    "name": venue.name,
-    "genres": format_string(venue.genres).split(','),
-    "address": venue.phone,
-    "city": venue.city,
-    "state": venue.state,
-    "phone": venue.phone,
-    "website": venue.website_link,
-    "facebook_link": venue.facebook_link,
-    "seeking_talent": venue.seeking_talent,
-    "seeking_description": venue.seeking_desc,
-    "image_link": venue.image_link
-  }
+  form.name.default = venue.name
+  form.city.default = venue.city
+  form.state.default = venue.state
+  form.address.default = venue.address
+  form.phone.default = venue.phone
+  form.genres.default = venue.genres
+  form.image_link.default = venue.image_link
+  form.website_link.default = venue.website_link
+  form.facebook_link.default = venue.facebook_link
+  form.seeking_talent.default = venue.seeking_talent
+  form.seeking_description.default = venue.seeking_desc
+  form.process()
   # TODO: populate form with values from venue with ID <venue_id>
-  return render_template('forms/edit_venue.html', form=form, venue=body)
+  return render_template('forms/edit_venue.html', form=form, venue=venue)
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
