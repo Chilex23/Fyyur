@@ -17,5 +17,4 @@ document.getElementById('delete-btn').addEventListener('click', e => {
   .catch(e => {
     console.log(e);
   })
-  console.log(id);
 })
