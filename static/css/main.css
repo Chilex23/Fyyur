@@ -209,3 +209,11 @@ h2.monospace {
 .subtitle {
   opacity: 0.5;
 }
+
+.recent {
+  display: flex;
+}
+
+.venues {
+  margin-right: auto;
+}

@@ -9,6 +9,7 @@ from datetime import datetime
 from flask import Flask, render_template, request, Response, flash, redirect, url_for, abort, jsonify
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import desc
 from flask_migrate import Migrate
 import logging
 from logging import Formatter, FileHandler
@@ -50,7 +51,9 @@ def format_string(string):
 
 @app.route('/')
 def index():
-  return render_template('pages/home.html')
+  recent_venues = Venue.query.order_by(desc(Venue.id)).limit(10)
+  recent_artists = Artist.query.order_by(desc(Artist.id)).limit(10)
+  return render_template('pages/home.html', venues=recent_venues, artists=recent_artists)
 
 
 #  Venues
