@@ -87,23 +87,21 @@ def venues():
   venues = Venue.query.all()
   # List to hold all shows displayed in groups based on city and state
   data3 = []
+  city_state = []
+  # If there is a dictionary in the list, check if the key: value in the dictionary are not the same to avoid duplicate data or else create new entries in the dictionary and append it to the list
   for i in venues:
     obj = {}
-    # If there is a dictionary in the list, check if the key: value in the dictionary are not the same to avoid duplicate data or else create new entries in the dictionary and append it to the list
-    if len(data3) > 0:
-      for j in data3:
-        if i.city not in j.values() and i.state not in j.values():
-          obj['city'] = i.city
-          obj['state'] = i.state
-          obj['venues'] = Venue.query.filter_by(city=i.city, state=i.state).all()
-      data3.append(obj)         
-    else:
-      obj['city'] = i.city
-      obj['state'] = i.state
-      obj['venues'] = Venue.query.filter_by(city=i.city, state=i.state).all()
+    obj['city'] = i.city
+    obj['state'] = i.state
+    obj['venues'] = Venue.query.filter_by(city=i.city, state=i.state).all()
+    if f"{obj['city']}, {obj['state']}" not in city_state:
+      city_state.append(f"{obj['city']}, {obj['state']}")
       data3.append(obj)
+    else:
+      continue
     print(obj)
-  #return render_template('pages/demo.html', data=data3)
+  print(data3)
+  print(city_state) 
   return render_template('pages/venues.html', areas=data3)
 
 @app.route('/venues/search', methods=['POST'])

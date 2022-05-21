@@ -2,7 +2,6 @@
 {% block title %}Fyyur | Venues{% endblock %}
 {% block content %}
 {% for area in areas %}
-{% if area %}
 <h3>{{ area.city }}, {{ area.state }}</h3>
 	<ul class="items">
 		{% for venue in area.venues %}
@@ -16,6 +15,5 @@
 		</li>
 		{% endfor %}
 	</ul>
-{% endif %}
 {% endfor %}
 {% endblock %}
