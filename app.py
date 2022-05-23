@@ -50,9 +50,7 @@ def format_string(string):
 
 @app.route('/')
 def index():
-  recent_venues = Venue.query.order_by(desc(Venue.id)).limit(10)
-  recent_artists = Artist.query.order_by(desc(Artist.id)).limit(10)
-  return render_template('pages/home.html', venues=recent_venues, artists=recent_artists)
+  return render_template('pages/home.html')
 
 
 #  Venues
