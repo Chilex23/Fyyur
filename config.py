@@ -12,3 +12,9 @@ DEBUG = True
 # TODO IMPLEMENT DATABASE URL
 SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:snowwhite01@localhost:5432/fyyur'
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+SQLALCHEMY_ENGINE_OPTIONS = {
+    "max_overflow": 15,
+    "pool_pre_ping": True,
+    "pool_recycle": 60 * 60,
+    "pool_size": 30,
+}

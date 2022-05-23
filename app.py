@@ -6,7 +6,7 @@ import json
 import dateutil.parser
 import babel
 from datetime import datetime
-from flask import Flask, render_template, request, Response, flash, redirect, url_for, abort, jsonify
+from flask import Flask, copy_current_request_context, render_template, request, Response, flash, redirect, url_for, abort, jsonify
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
@@ -50,7 +50,10 @@ def format_string(string):
 
 @app.route('/')
 def index():
-  return render_template('pages/home.html')
+  recent_venues = Venue.query.order_by(desc(Venue.id)).limit(10)
+  recent_artists = Artist.query.order_by(desc(Artist.id)).limit(10)
+  db.session.close()
+  return render_template('pages/home.html', venues=recent_venues, artists=recent_artists)
 
 
 #  Venues
@@ -74,6 +77,7 @@ def venues():
       data.append(obj)
     else:
       continue
+  db.session.close()
   return render_template('pages/venues.html', areas=data)
 
 @app.route('/venues/search', methods=['POST'])
@@ -91,6 +95,7 @@ def search_venues():
       "num_upcoming_shows": len(Show.query.filter(Show.venue_id == i.id, Show.start_time > datetime.now()).all()),
     } for i in venues]
   }
+  db.session.close()
   return render_template('pages/search_venues.html', results=response, search_term=search_term)
 
 @app.route('/venues/<int:venue_id>')
@@ -134,6 +139,7 @@ def show_venue(venue_id):
     "past_shows_count": len(past),
     "upcoming_shows_count": len(upcoming),
   }
+  db.session.close()
   return render_template('pages/show_venue.html', venue=data)
 
 #  Create Venue
@@ -165,15 +171,14 @@ def create_venue_submission():
     new_venue = Venue(name=name, city=city, address=address, state=state, phone=phone, image_link=image, genres=genres, facebook_link=facebook, website_link=website, seeking_talent=seek_talent, seeking_desc=seek_desc)
     db.session.add(new_venue)
     db.session.commit()
+    db.session.close()
     flash('Venue ' + name + ' was successfully listed!')
     return redirect(url_for('index'))
   except:
     db.session.rollback()
     flash('An error occurred. Venue ' + name + ' could not be listed.')
     return redirect(url_for('index'))
-  finally:
-    db.session.close()
-
+  
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
@@ -201,6 +206,7 @@ def delete_venue(venue_id):
 def artists():
   # TODO: replace with real data returned from querying the database
   data = Artist.query.all()
+  db.session.close()
   return render_template('pages/artists.html', artists=data)
 
 @app.route('/artists/search', methods=['POST'])
@@ -218,6 +224,7 @@ def search_artists():
       "num_upcoming_shows": len(Show.query.filter(Show.artist_id == i.id, Show.start_time > datetime.now()).all()),
     } for i in artists]
   }
+  db.session.close()
   return render_template('pages/search_artists.html', results=response, search_term=search_term)
 
 @app.route('/artists/<int:artist_id>')
@@ -225,6 +232,7 @@ def show_artist(artist_id):
   # shows the artist page with the given artist_id
   # TODO: replace with real artist data from the artist table, using artist_id
   artist = Artist.query.get(artist_id)
+  db.session.close()
   # Query the Show table for all shows involving the artist
   upcoming_shows = Show.query.filter(Show.artist_id==artist_id, Show.start_time > datetime.now()).all()
   past_shows = Show.query.filter(Show.artist_id==artist_id, Show.start_time < datetime.now()).all()
@@ -367,14 +375,13 @@ def create_artist_submission():
     new_artist = Artist(name=name, city=city, state=state, phone=phone, image_link=image, genres=genres, facebook_link=facebook, website_link=website, seeking_venue=seek_venue, seeking_desc=seek_desc)
     db.session.add(new_artist)
     db.session.commit()
+    db.session.close()
     flash('Artist ' + name + ' was successfully listed!')
     return redirect(url_for('index'))
   except:
     db.session.rollback()
     flash('An error occurred. Artist ' + name + ' could not be listed.')
     return redirect(url_for('index'))
-  finally:
-    db.session.close()
 
 #  Shows
 #  ----------------------------------------------------------------
@@ -385,6 +392,7 @@ def shows():
   # TODO: replace with real venues data.
   shows = Show.query.filter(Show.start_time > datetime.now()).all()
   data = [{"venue_id": s.venue_id, "venue_name": s.venue.name, "artist_id": s.artist_id, "artist_name": s.artist.name, "artist_image_link": s.artist.image_link, "start_time": str(s.start_time)} for s in shows]
+  db.session.close()
   return render_template('pages/shows.html', shows=data)
 
 @app.route('/shows/create')
