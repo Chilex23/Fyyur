@@ -15,7 +15,6 @@ import logging
 from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
-from model import *
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
@@ -25,7 +24,7 @@ moment = Moment(app)
 app.config.from_object('config')
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-
+from model import *
 # TODO: connect to a local postgresql database
 
 #----------------------------------------------------------------------------#
@@ -62,33 +61,11 @@ def index():
 @app.route('/venues')
 def venues():
   # TODO: replace with real venues data.
-  #       num_upcoming_shows should be aggregated based on number of upcoming shows per venue.
-  # data=[{
-  #   "city": "San Francisco",
-  #   "state": "CA",
-  #   "venues": [{
-  #     "id": 1,
-  #     "name": "The Musical Hop",
-  #     "num_upcoming_shows": 0,
-  #   }, {
-  #     "id": 3,
-  #     "name": "Park Square Live Music & Coffee",
-  #     "num_upcoming_shows": 1,
-  #   }]
-  # }, {
-  #   "city": "New York",
-  #   "state": "NY",
-  #   "venues": [{
-  #     "id": 2,
-  #     "name": "The Dueling Pianos Bar",
-  #     "num_upcoming_shows": 0,
-  #   }]
-  # }]
   venues = Venue.query.all()
   # List to hold all shows displayed in groups based on city and state
-  data3 = []
+  data = []
   city_state = []
-  # If there is a dictionary in the list, check if the key: value in the dictionary are not the same to avoid duplicate data or else create new entries in the dictionary and append it to the list
+  # Put distinct city, state in the city_state list and add venues to those city-state groups
   for i in venues:
     obj = {}
     obj['city'] = i.city
@@ -96,13 +73,10 @@ def venues():
     obj['venues'] = Venue.query.filter_by(city=i.city, state=i.state).all()
     if f"{obj['city']}, {obj['state']}" not in city_state:
       city_state.append(f"{obj['city']}, {obj['state']}")
-      data3.append(obj)
+      data.append(obj)
     else:
       continue
-    print(obj)
-  print(data3)
-  print(city_state) 
-  return render_template('pages/venues.html', areas=data3)
+  return render_template('pages/venues.html', areas=data)
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
