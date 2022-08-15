@@ -343,7 +343,7 @@ def edit_venue_submission(venue_id):
   venue.genres = request.form.get('genres')
   venue.facebook_link = request.form.get('facebook_link')
   venue.website_link = request.form.get('website_link')
-  venue.seeking_talent = request.form.get('seeking_talent')
+  venue.seeking_talent = True if request.form['seeking_talent'] == 'y' else False
   venue.seeking_desc = request.form.get('seeking_description')
   db.session.commit()
   return redirect(url_for('show_venue', venue_id=venue_id))
