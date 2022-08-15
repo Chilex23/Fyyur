@@ -21,9 +21,10 @@ from forms import *
 
 app = Flask(__name__)
 moment = Moment(app)
-app.config.from_object('config')
+# app.config.from_object('config')
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+setup_db(app)
 from model import *
 # TODO: connect to a local postgresql database
 
