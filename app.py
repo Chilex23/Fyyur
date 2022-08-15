@@ -24,9 +24,9 @@ moment = Moment(app)
 # app.config.from_object('config')
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-setup_db(app)
 from model import *
 # TODO: connect to a local postgresql database
+setup_db(app)
 
 #----------------------------------------------------------------------------#
 # Filters.
