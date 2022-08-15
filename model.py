@@ -4,24 +4,6 @@
 import os
 from app import db
 
-DB_HOST = os.getenv('DB_HOST')
-DB_USER = os.getenv('DB_USER')
-DB_PASSWORD = os.getenv('DB_PASSWORD')
-DB_NAME = os.getenv('DB_NAME')
-database_name = 'trivia'
-
-database_path = "postgresql://{}:{}@{}/{}".format(
-    DB_USER, DB_PASSWORD, DB_HOST, DB_NAME
-)
-
-def setup_db(app, database_path=database_path):
-  # app.config["SQLALCHEMY_DATABASE_URI"] = database_path
-  app.config["SQLALCHEMY_DATABASE_URI"] = 'postgres://nnwsixatdsfgfv:df154d2383570e2d8eab0ef8a3f1edb7f34290e6bdbd8f72d97d759ebf0e875a@ec2-44-209-186-51.compute-1.amazonaws.com:5432/d2h2dl7orvp1o0'
-  app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-  db.app = app
-  db.init_app(app)
-  db.create_all()
-
 class Venue(db.Model):
     __tablename__ = 'Venue'
 
