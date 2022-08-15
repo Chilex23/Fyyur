@@ -157,17 +157,28 @@ def create_venue_submission():
   # TODO: modify data to be the data object returned from db insertion
   form = VenueForm()
   # Retrieve the form data
-  name = form.name.data
-  city = form.city.data
-  address = form.address.data
-  state = form.state.data
-  phone = form.phone.data
-  image = form.image_link.data
-  genres = form.genres.data
-  facebook = form.facebook_link.data
-  website = form.website_link.data
-  seek_talent = form.seeking_talent.data
-  seek_desc = form.seeking_description.data
+  name = request.form['name']
+  city = request.form['city']
+  state = request.form['state']
+  address = request.form['address']
+  phone = request.form['phone']
+  genres = request.form['genres']
+  facebook = request.form['facebook_link']
+  image = request.form['image_link']
+  website = request.form['website_link']
+  seek_talent = True if request.form['seeking_talent'] == 'y' else False
+  seek_desc = request.form['seeking_description']
+  # name = form.name.data
+  # city = form.city.data
+  # address = form.address.data
+  # state = form.state.data
+  # phone = form.phone.data
+  # image = form.image_link.data
+  # genres = form.genres.data
+  # facebook = form.facebook_link.data
+  # website = form.website_link.data
+  # seek_talent = form.seeking_talent.data
+  # seek_desc = form.seeking_description.data
   try:
     new_venue = Venue(name=name, city=city, address=address, state=state, phone=phone, image_link=image, genres=genres, facebook_link=facebook, website_link=website, seeking_talent=seek_talent, seeking_desc=seek_desc)
     db.session.add(new_venue)
