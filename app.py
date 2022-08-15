@@ -155,7 +155,6 @@ def create_venue_form():
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
   # TODO: modify data to be the data object returned from db insertion
-  form = VenueForm()
   # Retrieve the form data
   name = request.form['name']
   city = request.form['city']
@@ -168,17 +167,7 @@ def create_venue_submission():
   website = request.form['website_link']
   seek_talent = True if request.form['seeking_talent'] == 'y' else False
   seek_desc = request.form['seeking_description']
-  # name = form.name.data
-  # city = form.city.data
-  # address = form.address.data
-  # state = form.state.data
-  # phone = form.phone.data
-  # image = form.image_link.data
-  # genres = form.genres.data
-  # facebook = form.facebook_link.data
-  # website = form.website_link.data
-  # seek_talent = form.seeking_talent.data
-  # seek_desc = form.seeking_description.data
+  # Create a new venue object
   try:
     new_venue = Venue(name=name, city=city, address=address, state=state, phone=phone, image_link=image, genres=genres, facebook_link=facebook, website_link=website, seeking_talent=seek_talent, seeking_desc=seek_desc)
     db.session.add(new_venue)
@@ -226,7 +215,7 @@ def search_artists():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
-  search_term=request.form.get('search_term', '')
+  search_term = request.form.get('search_term', '')
   artists = Artist.query.filter(Artist.name.ilike(f'%{search_term}%')).all()
   response={
     "count": len(artists),
@@ -308,16 +297,16 @@ def edit_artist_submission(artist_id):
   # artist record with ID <artist_id> using the new attributes
   form = ArtistForm()
   artist = Artist.query.get(artist_id)
-  artist.name = form.name.data
-  artist.city = form.city.data
-  artist.state = form.state.data
-  artist.phone = form.phone.data
-  artist.image_link = form.image_link.data
-  artist.genres = form.genres.data
-  artist.facebook_link = form.facebook_link.data
-  artist.website_link = form.website_link.data
-  artist.seeking_venue = form.seeking_venue.data
-  artist.seeking_desc = form.seeking_description.data
+  artist.name = request.form['name']
+  artist.city = request.form['city']
+  artist.state = request.form['state']
+  artist.phone = request.form['phone']
+  artist.image_link = request.form['image_link']
+  artist.genres = request.form['genres']
+  artist.facebook_link = request.form['facebook_link']
+  artist.website_link = request.form['website_link']
+  artist.seeking_venue = True if 'seeking_venue' in request.form else False
+  artist.seeking_desc = request.form['seeking_description']
   db.session.commit()
   return redirect(url_for('show_artist', artist_id=artist_id))
 
@@ -345,17 +334,17 @@ def edit_venue_submission(venue_id):
   # TODO: take values from the form submitted, and update existing
   form = VenueForm()
   venue = Venue.query.get(venue_id)
-  venue.name = form.name.data
-  venue.city = form.city.data
-  venue.state = form.state.data
-  venue.address = form.address.data
-  venue.phone = form.phone.data
-  venue.image_link = form.image_link.data
-  venue.genres = form.genres.data
-  venue.facebook_link = form.facebook_link.data
-  venue.website_link = form.website_link.data
-  venue.seeking_talent = form.seeking_talent.data
-  venue.seeking_desc = form.seeking_description.data
+  venue.name = request.form.get('name')
+  venue.city = request.form.get('city')
+  venue.state = request.form.get('state')
+  venue.address = request.form.get('address')
+  venue.phone = request.form.get('phone')
+  venue.image_link = request.form.get('image_link')
+  venue.genres = request.form.get('genres')
+  venue.facebook_link = request.form.get('facebook_link')
+  venue.website_link = request.form.get('website_link')
+  venue.seeking_talent = request.form.get('seeking_talent')
+  venue.seeking_desc = request.form.get('seeking_description')
   db.session.commit()
   return redirect(url_for('show_venue', venue_id=venue_id))
  
@@ -373,16 +362,17 @@ def create_artist_submission():
   # TODO: insert form data as a new Venue record in the db, instead
   # TODO: modify data to be the data object returned from db insertion
   form = ArtistForm()
-  name = form.name.data
-  city = form.city.data
-  state = form.state.data
-  phone = form.phone.data
-  image = form.image_link.data
-  genres = form.genres.data
-  facebook = form.facebook_link.data
-  website = form.website_link.data
-  seek_venue = form.seeking_venue.data
-  seek_desc = form.seeking_description.data
+  name = request.form.get('name')
+  city = request.form.get('city')
+  state = request.form.get('state')
+  phone = request.form.get('phone')
+  genres = request.form.get('genres')
+  image = request.form.get('image_link')
+  website = request.form.get('website_link')
+  facebook = request.form.get('facebook_link')
+  seek_venue = True if request.form.get('seeking_venue') == 'y' else False
+  seek_desc = request.form.get('seeking_description')
+
   try:
     new_artist = Artist(name=name, city=city, state=state, phone=phone, image_link=image, genres=genres, facebook_link=facebook, website_link=website, seeking_venue=seek_venue, seeking_desc=seek_desc)
     db.session.add(new_artist)
@@ -418,9 +408,13 @@ def create_show_submission():
   # called to create new shows in the db, upon submitting new show listing form
   # TODO: insert form data as a new Show record in the db, instead
   form = ShowForm()
-  artist_id = form.artist_id.data
-  venue_id = form.venue_id.data
-  start_time = form.start_time.data 
+  artist_id = request.form.get('artist_id')
+  venue_id = request.form.get('venue_id')
+  start_time = request.form.get('start_time')
+
+  # artist_id = form.artist_id.data
+  # venue_id = form.venue_id.data
+  # start_time = form.start_time.data 
   try:
     new_show = Show(venue_id=venue_id, artist_id=artist_id, start_time=start_time)
     db.session.add(new_show)
